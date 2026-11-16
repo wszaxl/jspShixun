@@ -1,0 +1,140 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="com.common.dbaccess.bean.City" %>
+<%@ page import="java.util.List" %>
+<%--
+  clist.jsp —— 城市管理（视频07）
+  位置：WEB-INF/city/clist.jsp，只能由 CityServlet 的 list() 转发进来
+  入口：/city/list
+  结构照老师的 clist.jsp：面包屑（城市管理 / 查询城市）+ 只有「刷新」按钮 + 4 列的表
+--%>
+<%
+    List<City> retList = (List<City>) request.getAttribute("retList");
+%>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>城市管理 - 运营管理平台</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+
+<div class="topbar">
+    <a class="brand" href="/user/list">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M4 20c0-8 5-14 16-15-1 11-7 16-16 15z" fill="#ffffff" opacity=".92"/>
+            <path d="M4 20c3-6 7-9 12-11" stroke="#5492B7" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        运营管理平台
+    </a>
+    <div class="userzone">
+        <span class="avatar"></span>
+        <div class="uinfo">
+            <span>欢迎光临，</span>
+            <span class="uname">${empty sessionScope.username ? '张三' : sessionScope.username}</span>
+        </div>
+        <span class="caret"></span>
+    </div>
+</div>
+
+<aside class="sidebar">
+    <div class="shortcuts">
+        <a class="sc sc1" title="统计">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff">
+                <rect x="3" y="12" width="4" height="8"/><rect x="10" y="7" width="4" height="13"/>
+                <rect x="17" y="3" width="4" height="17"/>
+            </svg>
+        </a>
+        <a class="sc sc2" title="编辑">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff">
+                <path d="M3 17.2V21h3.8L18 9.8 14.2 6 3 17.2zM20.7 7.1c.4-.4.4-1 0-1.4l-2.4-2.4c-.4-.4-1-.4-1.4 0l-1.9 1.9 3.8 3.8 1.9-1.9z"/>
+            </svg>
+        </a>
+        <a class="sc sc3" title="报表">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+                <rect x="3" y="4" width="18" height="16" rx="1.5"/>
+                <path d="M3 9h18M9 9v11M15 9v11"/>
+            </svg>
+        </a>
+        <a class="sc sc4" title="设置">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff">
+                <path d="M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5zm9 3.5c0-.6-.1-1.2-.2-1.7l2-1.5-2-3.4-2.3 1c-.9-.7-1.9-1.3-3-1.6L15 2H9l-.5 2.8c-1.1.3-2.1.9-3 1.6l-2.3-1-2 3.4 2 1.5c-.1.5-.2 1.1-.2 1.7s.1 1.2.2 1.7l-2 1.5 2 3.4 2.3-1c.9.7 1.9 1.3 3 1.6L9 22h6l.5-2.8c1.1-.3 2.1-.9 3-1.6l2.3 1 2-3.4-2-1.5c.1-.5.2-1.1.2-1.7z"/>
+            </svg>
+        </a>
+    </div>
+    <ul class="nav">
+        <li class="nav-item active">
+            <span class="ic">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/>
+                </svg>
+            </span>
+            控制台
+        </li>
+        <li class="nav-item parent">
+            <span class="ic">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>
+                </svg>
+            </span>
+            系统管理
+            <span class="chev">&#9662;</span>
+        </li>
+        <ul class="submenu">
+            <li><a href="/user/list">用户管理</a></li>
+            <li class="active"><a href="/city/list">城市查看</a></li>
+        </ul>
+    </ul>
+    <div class="collapse"><span>&#8249;&#8249;</span></div>
+</aside>
+
+<div class="content">
+    <div class="breadcrumb">
+        <a href="/city/list">城市管理</a><span class="sep">/</span>查询城市
+    </div>
+
+    <!-- 老师这里只剩一个「刷新」按钮：没有查询输入框，也没有「添加用户」 -->
+    <form class="filter" action="/city/list">
+        <button type="submit" class="btn btn-green">刷新</button>
+    </form>
+
+    <table class="tbl">
+        <thead>
+        <tr>
+            <th class="col-no">编号</th>
+            <th class="col-pk">主键</th>
+            <th class="col-name">城市名称</th>
+            <th class="col-pwd">城市编号</th>
+            <th class="col-op">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <%
+            if (retList != null && !retList.isEmpty()) {
+                int no = 1;
+                for (City c : retList) {
+        %>
+        <tr>
+            <td><%= no++ %></td>
+            <td><%= c.getId() %></td>
+            <td><%= c.getCity() == null ? "" : c.getCity() %></td>
+            <td><%= c.getCode() == null ? "" : c.getCode() %></td>
+            <td>
+                <div class="op-cell">
+                    <a class="btn btn-red btn-xs" href="/city/delete?id=<%= c.getId() %>"
+                       onclick="return confirm('确定要删除【<%= c.getCity() %>】吗？')">删除</a>
+                </div>
+            </td>
+        </tr>
+        <%
+                }
+            } else {
+        %>
+        <tr><td colspan="5" style="text-align:center;color:#999;padding:26px;">暂无数据</td></tr>
+        <% } %>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

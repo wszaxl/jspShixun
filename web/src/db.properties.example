@@ -1,0 +1,5 @@
+# 数据库配置模板：复制本文件为 db.properties，并改成你自己本机的 MySQL 账号密码
+# db.properties 已被 .gitignore 排除，不会提交到仓库，所以你的密码不会泄露
+db.database=lizx
+db.username=root
+db.password=请填写你本机的MySQL密码

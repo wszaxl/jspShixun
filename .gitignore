@@ -1,0 +1,23 @@
+# ===== 视频07：提交前排除不该进仓库的东西 =====
+
+# IDEA 自己的配置目录和模块文件
+.idea/
+*.iml
+
+# 编译输出（javac 生成的 class，仓库里不存，编译一下就有）
+out/
+web/WEB-INF/classes/
+
+# 本机数据库密码，绝不进仓库（只提交 .example 模板）
+**/db.properties
+!**/db.properties.example
+
+# 本地运行用的 Tomcat 整个目录，属于工具不是代码，几百兆不能提交
+apache-tomcat-9.0.115/
+
+# lib 下的旧驱动备份，不是项目依赖
+web/WEB-INF/lib/_backup_*/
+
+# 与本项目无关的第三方目录 / 日志
+typora/
+*.log

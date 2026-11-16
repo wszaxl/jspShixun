@@ -1,0 +1,264 @@
+/* ============================================================
+   运营管理平台 - 后台界面样式
+   尺寸/配色全部按视频05 原始帧逐像素采样：
+     导航 #5492B7 / 用户区 #71ABD0 / 红 #C4454C / 绿 #55AC41
+     蓝按钮 #568FC6 / 面包屑 #F5F5F5 / 表头 #F9F9F9
+     导航高 67 / 侧栏宽 286 / 面包屑 54 / 表头 45 / 行高 48
+   ============================================================ */
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; height: 100%; }
+
+body {
+    font-family: "Microsoft YaHei", "Hiragino Sans GB", "PingFang SC", Arial, sans-serif;
+    font-size: 15px;
+    color: #444;
+    background: #fff;
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; margin: 0; padding: 0; }
+
+/* ---------------- 顶部导航 ---------------- */
+.topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 67px; z-index: 30;
+    background: #5492B7;
+    display: flex; align-items: center;
+}
+
+.topbar .brand {
+    display: flex; align-items: center; gap: 10px;
+    padding-left: 26px; color: #fff; font-size: 19px; letter-spacing: 1px;
+}
+.topbar .brand svg { width: 24px; height: 24px; display: block; }
+
+.topbar .userzone {
+    margin-left: auto; height: 67px;
+    background: #71ABD0;
+    display: flex; align-items: center; gap: 11px;
+    padding: 0 24px 0 22px;
+}
+
+.avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: #d9d9d9 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='12' r='6' fill='%23a8a8a8'/><path d='M4 30c0-6.6 5.4-11 12-11s12 4.4 12 11z' fill='%23a8a8a8'/></svg>") center/cover no-repeat;
+    border: 2px solid rgba(255,255,255,.6);
+    flex: none;
+}
+
+.uinfo { color: #fff; font-size: 13px; line-height: 1.3; }
+.uinfo .uname { display: block; }
+
+.caret {
+    width: 0; height: 0; margin-left: 3px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #fff;
+}
+
+/* ---------------- 左侧栏 ---------------- */
+.sidebar {
+    position: fixed; top: 67px; left: 0; bottom: 0; width: 286px;
+    background: #fff; border-right: 1px solid #e2e2e2; z-index: 20;
+    display: flex; flex-direction: column;
+}
+
+.shortcuts {
+    display: flex; padding: 13px 16px 11px 13px; gap: 6px;
+}
+
+.shortcuts .sc {
+    width: 59px; height: 47px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.sc1 { background: #8EC17F; }
+.sc2 { background: #7EB8DE; }
+.sc3 { background: #F2B84D; }
+.sc4 { background: #BF5045; }
+.shortcuts svg { width: 22px; height: 22px; }
+
+.nav { padding-top: 2px; }
+
+.nav-item {
+    position: relative;
+    padding: 14px 18px 14px 40px;
+    font-size: 15px; color: #4c4c4c;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+}
+
+.nav-item .ic { color: #5b8fb5; flex: none; display: flex; }
+
+.nav-item.active { background: #f2f8fb; color: #3a7fa8; }
+
+/* 选中项右侧的小三角，指向内容区 */
+.nav-item.active::after {
+    content: "";
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 9px solid #a9cfe4;
+}
+
+.nav-item.parent { font-weight: 600; color: #3f3f3f; }
+.nav-item .chev { margin-left: auto; color: #999; font-size: 12px; }
+
+.submenu { background: #fff; }
+.submenu li {
+    position: relative;
+    padding: 12px 18px 12px 55px;
+    font-size: 15px; color: #6a6a6a;
+    border-bottom: 1px dotted #dcdcdc;
+    cursor: pointer;
+}
+/* 左侧小虚线刻度，模仿模板的子菜单样式 */
+.submenu li::before {
+    content: "";
+    position: absolute; left: 22px; top: 50%;
+    width: 18px; height: 0;
+    border-top: 1px dotted #c9c9c9;
+}
+.submenu li:hover { background: #f6fafc; }
+/* 视频07：子菜单项变成可点的链接，去掉下划线和默认蓝色 */
+.submenu li a { display: block; color: inherit; text-decoration: none; }
+.submenu li.active { color: #2f7ea8; font-weight: 700; }
+
+.sidebar .collapse {
+    margin-top: auto; padding: 14px 0 0; text-align: center;
+    background: #F2F2F2; border-top: 1px solid #e4e4e4;
+    height: 120px;
+}
+.sidebar .collapse span {
+    display: inline-block; width: 30px; height: 30px; line-height: 28px;
+    border: 1px solid #cfcfcf; border-radius: 50%;
+    color: #aaa; font-size: 12px; background: #fafafa;
+}
+
+/* ---------------- 主内容区 ---------------- */
+.content { margin-left: 286px; padding-top: 67px; min-height: 100%; }
+
+.breadcrumb {
+    background: #F5F5F5;
+    padding: 15px 26px;
+    font-size: 15px; color: #777;
+    border-bottom: 1px solid #ececec;
+}
+.breadcrumb a { color: #4a90b8; }
+.breadcrumb .sep { margin: 0 9px; color: #aaa; }
+
+.filter {
+    padding: 11px 26px;
+    display: flex; align-items: center; gap: 10px;
+    background: #fff;
+}
+
+.filter label { color: #333; font-size: 15px; width: 68px; flex: none; }
+
+.filter input[type=text] {
+    height: 40px; width: 280px;
+    padding: 0 10px; font-size: 15px;
+    border: 1px solid #cfd8dd; border-radius: 3px;
+    outline: none; font-family: inherit; color: #333;
+}
+.filter input[type=text]:focus {
+    border-color: #5492B7; box-shadow: 0 0 0 2px rgba(84,146,183,.15);
+}
+.filter input[type=text]::placeholder { color: #b7b7b7; }
+
+/* ---------------- 按钮 ---------------- */
+.btn {
+    display: inline-block; border: 0; border-radius: 3px;
+    color: #fff; cursor: pointer; font-family: inherit;
+    font-size: 15px; padding: 0 20px; height: 40px; line-height: 40px;
+    text-align: center;
+}
+.btn-red   { background: #C4454C; }
+.btn-red:hover   { background: #b13c43; }
+.btn-green { background: #6EC759; }
+.btn-green:hover { background: #5fb44e; }
+.btn-blue  { background: #568FC6; }
+.btn-blue:hover  { background: #4a80b4; }
+/* 视频06：表单里的「返回上一级」是橙黄色按钮 */
+.btn-orange { background: #E3AE48; }
+.btn-orange:hover { background: #d09f3e; }
+
+.btn-xs {
+    height: 30px; line-height: 30px; padding: 0 12px;
+    font-size: 14px; border-radius: 3px;
+}
+
+/* ---------------- 表格 ---------------- */
+.tbl { width: 100%; border-collapse: collapse; }
+
+.tbl thead th {
+    background: #F9F9F9;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 15px;
+    color: #333;
+    border-bottom: 1px solid #DEDEDE;
+    border-top: 1px solid #f0f0f0;
+    white-space: nowrap;
+}
+
+.tbl tbody td {
+    padding: 12px 14px;
+    font-size: 15px;
+    color: #444;
+    border-bottom: 1px solid #DDDDDD;
+    vertical-align: middle;
+}
+
+.tbl tbody tr:hover { background: #fafcfe; }
+
+.col-no    { width: 11%; }
+.col-pk    { width: 11.5%; }
+.col-name  { width: 23.5%; }
+.col-pwd   { width: 12.5%; }
+.col-role  { width: 16%; }
+.col-op    { width: 25.5%; }
+
+.op-cell { display: flex; gap: 9px; }
+
+/* 操作反馈条 */
+.msgbar {
+    margin: 0 26px 10px; padding: 10px 14px;
+    background: #eaf6e6; border: 1px solid #cfe8c6;
+    color: #3f7d2c; border-radius: 3px; font-size: 15px;
+}
+
+/* ---------------- 添加 / 修改页面表单（视频06，尺寸按视频帧实测） ---------------- */
+/* 老师界面里「基本信息」是一整条浅蓝横幅 #DCEFF6，不是带边框的小块 */
+.page-header {
+    margin: 0; padding: 0 26px;
+    height: 50px; line-height: 50px;
+    font-size: 15px; font-weight: 700; color: #333;
+    background: #DCEFF6;
+}
+
+.form-horizontal { padding: 18px 26px 0; }
+
+.form-row { display: flex; align-items: center; margin-bottom: 26px; }
+
+.form-row > label {
+    width: 240px; text-align: right; padding-right: 16px;
+    color: #333; flex: none; font-size: 15px;
+}
+
+.form-row .ctl { flex: none; width: 445px; }
+
+.form-row input[type=text],
+.form-row input[type=password],
+.form-row select {
+    width: 100%; height: 42px; padding: 0 10px;
+    font-size: 15px; font-family: inherit; color: #333;
+    border: 1px solid #cfd8dd; border-radius: 3px; outline: none;
+}
+
+/* 按钮组整体靠输入框右侧，和视频里「保存 / 返回上一级」的位置一致 */
+.form-actions { padding-left: 449px; display: flex; gap: 8px; margin-top: -6px; }
+.form-actions .btn { height: 30px; line-height: 30px; padding: 0 26px; font-size: 14px; }
+.form-actions .btn-orange { padding: 0 38px; }

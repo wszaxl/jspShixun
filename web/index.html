@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录 - 运营平台</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #1C2023;                 /* 视频06 里老师登录页是深色底 */
+            display: flex; align-items: center; justify-content: center;
+        }
+        .page-title {
+            position: absolute; top: 9%; width: 100%; text-align: center;
+            color: #f4f6f7; font-size: 28px; letter-spacing: 4px; font-weight: 400;
+        }
+        .page-title .leaf { vertical-align: -6px; margin-right: 8px; }
+        .panel {
+            width: 542px; background: #ffffff; border-radius: 4px;
+            padding: 24px 30px 30px; box-shadow: 0 12px 40px rgba(0,0,0,.35);
+        }
+        .panel h2 {
+            margin: 0 0 20px; font-size: 17px; font-weight: 400;
+            color: #5b9bd5; text-align: center;
+        }
+        .panel h2 .book { color: #6EC759; margin-right: 6px; }
+        .field { position: relative; margin-bottom: 14px; }
+        .field input {
+            width: 100%; height: 38px; padding: 0 34px 0 10px;
+            border: 1px solid #d5dbe1; border-radius: 3px; font-size: 14px;
+            color: #2c3e50; outline: none;
+        }
+        .field input:focus { border-color: #5b9bd5; }
+        .field .icon {
+            position: absolute; right: 10px; top: 9px; font-size: 15px; color: #a9b4bf;
+        }
+        .row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+        #error {
+            min-height: 20px; line-height: 20px;
+            color: #e74c3c; font-size: 13px;
+        }
+        .btn-login {
+            width: 150px; height: 40px; border: 0; border-radius: 3px;
+            background: #4A90D9; color: #fff; font-size: 15px; cursor: pointer;
+        }
+        .btn-login:hover { background: #3d81c7; }
+    </style>
+</head>
+<body>
+
+<div class="page-title">
+    <svg class="leaf" width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M4 20c0-8 5-14 16-15-1 11-7 16-16 15z" fill="#7fd1c1"/>
+        <path d="M4 20c3-6 7-9 12-11" stroke="#1C2023" stroke-width="1.3"/>
+    </svg>运营平台
+</div>
+
+<div class="panel">
+    <h2><span class="book">&#128218;</span>请输入您的账号和密码</h2>
+
+    <!--
+      提交到 UserServlet 的 login 方法（web.xml 里把 /user/* 交给 UserServlet，
+      BaseHttpServlet 取 URL 最后一段 login 反射调用 login()）
+      input 的 name 必须和 servlet 里 getParameter("username"/"password") 对上
+    -->
+    <form action="/user/login" method="post" autocomplete="off">
+        <div class="field">
+            <input type="text" name="username" placeholder="请输入账号" />
+            <span class="icon">&#128100;</span>
+        </div>
+        <div class="field">
+            <input type="password" name="password" placeholder="请输入密码" />
+            <span class="icon">&#128274;</span>
+        </div>
+
+        <div class="row">
+            <!-- 登录失败时，Servlet 重定向回来会带 ?msg=xxx，下面用 JS 把 xxx 填进这个 span -->
+            <span id="error"></span>
+            <button type="submit" class="btn-login">&#128269; 登 录</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 作用：获取地址栏中的参数，比如 index.html?msg=%E7%94%A8%E6%88%B7%E5%90%8D... 取 msg
+    // 视频06 里 TomHttpServlet.open() 已经把中文按 UTF-8 编码，这里解码回来显示
+    function getIntentExtra(param) {
+        var query = decodeURIComponent(window.location.search.substring(1));
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == param) {
+                return pair[1];
+            }
+        }
+        return "";
+    }
+
+    window.onload = function () {
+        document.getElementById('error').innerHTML = getIntentExtra('msg');
+    };
+</script>
+
+</body>
+</html>
