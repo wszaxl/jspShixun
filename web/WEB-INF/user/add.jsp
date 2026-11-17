@@ -27,9 +27,12 @@
         <span class="avatar"></span>
         <div class="uinfo">
             <span>欢迎光临，</span>
-            <span class="uname">${empty username ? '张三' : username}</span>
+            <span class="uname">${empty sessionScope.username ? '张三' : sessionScope.username}</span>
         </div>
         <span class="caret"></span>
+        <div class="usermenu">
+            <a href="/user/logout">退出登录</a>
+        </div>
     </div>
 </div>
 
