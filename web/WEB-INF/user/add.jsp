@@ -82,6 +82,7 @@
         <ul class="submenu">
             <li><a href="/user/list">用户管理</a></li>
             <li><a href="/city/list">城市查看</a></li>
+            <li><a href="/weather/chart">天气查看</a></li>
         </ul>
     </ul>
     <div class="collapse"><span>&#8249;&#8249;</span></div>

@@ -28,4 +28,14 @@
     <servlet-name>CityServlet</servlet-name>
     <url-pattern>/city/*</url-pattern>
   </servlet-mapping>
+
+  <!-- 视频08：天气数据 / 折线图 / 城市编号 -->
+  <servlet>
+    <servlet-name>WeatherServlet</servlet-name>
+    <servlet-class>com.common.dbaccess.web.WeatherServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WeatherServlet</servlet-name>
+    <url-pattern>/weather/*</url-pattern>
+  </servlet-mapping>
 </web-app>
