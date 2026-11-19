@@ -4,7 +4,7 @@
 <%--
   chart.jsp —— 天气折线图（视频08）
   入口：/weather/chart   数据：/weather/spider   城市编号：/weather/cityCode?city=乐山
-  图表配置照老师给的 ECharts 折线图示例（一周气温变化 / Highest 蓝线 / Lowest 绿线），
+  图表配置照视频09老师的成品（XX一周气温变化 / 高温蓝线 / 低温绿线 / 双横轴 / 中文图例），
   外壳沿用我们项目的运营管理平台皮肤，保证和用户管理、城市管理界面一套风格。
 --%>
 <!DOCTYPE html>
@@ -18,6 +18,12 @@
         #chart { width:100%; height:460px; }
         .city-bar { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
         .city-bar input { height:36px; width:180px; padding:0 10px; border:1px solid #cfd8dd; border-radius:3px; }
+        /* 视频09：老师天气页的查询栏是浅蓝渐变条（跟用户列表页一致） */
+        .content .filter {
+            background: linear-gradient(to bottom, #e8f6fc 0%, #d9eef8 100%);
+            border-bottom: 1px solid #cfe5f0;
+        }
+        .content .filter label { font-size: 14px; color: #333; white-space: nowrap; }
         #code { color:#31708f; font-size:13px; }
     </style>
 </head>
@@ -64,16 +70,13 @@
 </aside>
 
 <div class="content">
-    <div class="breadcrumb">
-        <a href="/weather/chart">天气管理</a><span class="sep">/</span>天气折线图
-    </div>
+    <form class="filter" onsubmit="return false;">
+        <label>城市名称：</label>
+        <input type="text" id="city" value="北京" />
+        <button type="button" class="btn btn-red" onclick="weatherCity()">查询</button>
+    </form>
 
     <div class="chart-box">
-        <div class="city-bar">
-            <label>城市名称：</label>
-            <input type="text" id="city" value="北京" />
-            <button class="btn btn-red btn-xs" onclick="weather()">查询</button>
-        </div>
         <div id="chart"></div>
     </div>
 </div>
@@ -108,7 +111,7 @@
     };
 
     // 视频09 切换城市：城市存 localStorage，刷新后还记得上次查的城市
-    function weather(city) {
+    function weatherCity(city) {
         if (!city) {
             city = document.getElementById('city').value.trim() || localStorage.getItem('city') || '北京';
         }
@@ -130,62 +133,7 @@
             });
     }
 
-    weather(localStorage.getItem('city') || document.getElementById('city').value.trim());
-    window.addEventListener('resize', function () { chart.resize(); });
-</script>
-<script>
-    var chart = echarts.init(document.getElementById('chart'));
-
-    // 查城市编号：调用 /weather/cityCode?city=xxx
-    function queryCode() {
-        var city = document.getElementById('city').value.trim();
-        fetch('/weather/cityCode?city=' + encodeURIComponent(city))
-            .then(function (r) { return r.json(); })
-            .then(function (j) {
-                document.getElementById('code').textContent =
-                    j.code ? (city + ' 编号：' + j.code) : ('未查到编号');
-            });
-    }
-
-    // 拉取天气数据并画折线图
-    fetch('/weather/spider')
-        .then(function (r) { return r.json(); })
-        .then(function (w) {
-            if (w.error) { document.getElementById('chart').innerHTML = '数据获取失败：' + w.error; return; }
-            // temp2 是高温（蓝线 Highest），temp1 是低温（绿线 Lowest）
-            chart.setOption({
-                title: { text: '一周气温变化', left: 'center' },
-                tooltip: { trigger: 'axis' },
-                legend: { data: ['Highest', 'Lowest'], bottom: 0 },
-                toolbox: { show: true, feature: { dataZoom: {}, dataView: { readOnly: false }, magicType: { type: ['line', 'bar'] }, restore: {}, saveAsImage: {} } },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: w.time
-                },
-                yAxis: { type: 'value', axisLabel: { formatter: '{value} °C' } },
-                series: [
-                    {
-                        name: 'Highest', type: 'line', data: w.temp2,
-                        smooth: true,
-                        markPoint: { data: [{ type: 'max', name: '最高气温' }] },
-                        markLine: { data: [{ type: 'average', name: '平均值' }] },
-                        lineStyle: { color: '#5470c6' }, itemStyle: { color: '#5470c6' }
-                    },
-                    {
-                        name: 'Lowest', type: 'line', data: w.temp1,
-                        smooth: true,
-                        markPoint: { data: [{ type: 'min', name: '最低气温' }] },
-                        markLine: { data: [{ type: 'average', name: '平均值' }] },
-                        lineStyle: { color: '#91cc75' }, itemStyle: { color: '#91cc75' }
-                    }
-                ]
-            });
-        })
-        .catch(function (e) {
-            document.getElementById('chart').innerHTML = '数据加载失败：' + e;
-        });
-
+    weatherCity(localStorage.getItem('city') || document.getElementById('city').value.trim());
     window.addEventListener('resize', function () { chart.resize(); });
 </script>
 

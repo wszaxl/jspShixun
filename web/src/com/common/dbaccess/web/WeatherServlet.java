@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.common.dbaccess.bean.WeatherBean;
+import com.common.dbaccess.dao.CityDAO;
 import com.common.dbaccess.util.HttpConn;
 import com.google.gson.Gson;
 
@@ -28,6 +29,9 @@ import com.google.gson.Gson;
  * 解析用 WEB-INF/lib 里的 jsoup，跟老师 video08 里的思路一致。
  */
 public class WeatherServlet extends TomHttpServlet {
+
+    /** 视频09：搜过的城市要存进 city 表 */
+    private CityDAO cityDAO = new CityDAO();
 
     /** 2345 天气首页：8 天预报就在这页的 banner-right-con-list-* 里 */
     private static final String HOME = "https://tianqi.2345.com/";
@@ -130,9 +134,14 @@ public class WeatherServlet extends TomHttpServlet {
                     json = "{\"error\":\"未找到城市：" + city + "\"}";
                     return outRespJson(json, resp);
                 }
-                // 老师视频09：城市页 302 会用 Set-Cookie 写入 lastCountyId，
+                // 老师视频09：拿到编号后把它和城市名存进 city 表（添加城市）
+                String href = m.group();
+                String code = href.substring(href.lastIndexOf('/') + 1);
+                cityDAO.insert(city, code);
+
+                // 城市页 302 会用 Set-Cookie 写入 lastCountyId，
                 // 拿到这个 Cookie 再请求首页，服务器才返回指定城市的天气
-                String cityUrl = "https://tianqi.2345.com" + m.group();
+                String cityUrl = "https://tianqi.2345.com" + href;
                 String cookie = getCityCookie(cityUrl);
                 html = fetch(HOME, cookie);
             } else {
