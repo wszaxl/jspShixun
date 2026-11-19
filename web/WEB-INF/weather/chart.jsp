@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%--
   chart.jsp —— 天气折线图（视频08）
   入口：/weather/chart   数据：/weather/spider   城市编号：/weather/cityCode?city=乐山
@@ -33,7 +35,7 @@
         <span class="avatar"></span>
         <div class="uinfo">
             <span>欢迎光临，</span>
-            <span class="uname">${empty sessionScope.username ? '张三' : sessionScope.username}</span>
+            <span class="uname">${empty sessionScope.username ? '张三' : sessionScope.username}<small class="urole">${empty sessionScope.status ? '' : sessionScope.status}</small></span>
         </div>
         <span class="caret"></span>
         <div class="usermenu"><a href="/user/logout">退出登录</a></div>
@@ -51,9 +53,11 @@
         <li class="nav-item"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/></svg></span>控制台</li>
         <li class="nav-item parent"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg></span>系统管理<span class="chev">&#9662;</span></li>
         <ul class="submenu">
+            <c:if test="${sessionScope.status == '管理员'}">
             <li><a href="/user/list">用户管理</a></li>
-            <li><a href="/city/list">城市管理</a></li>
-            <li class="active"><a href="/weather/chart">天气查看</a></li>
+            </c:if>
+            <li><a href="/city/list">城市查看</a></li>
+            <li class="active"><a href="/weather/chart">天气预报</a></li>
         </ul>
     </ul>
     <div class="collapse"><span>&#8249;&#8249;</span></div>
@@ -66,16 +70,69 @@
 
     <div class="chart-box">
         <div class="city-bar">
-            <label>城市：</label>
-            <input type="text" id="city" value="乐山" />
-            <button class="btn btn-blue btn-xs" onclick="queryCode()">查编号</button>
-            <span id="code"></span>
+            <label>城市名称：</label>
+            <input type="text" id="city" value="北京" />
+            <button class="btn btn-red btn-xs" onclick="weather()">查询</button>
         </div>
         <div id="chart"></div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+    var chart = echarts.init(document.getElementById('chart'));
+    var option = {
+        title: { text: '一周气温变化', left: 'center' },
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['高温', '低温'], top: 4, right: 140 },
+        toolbox: { show: true, feature: { dataZoom: {}, dataView: { readOnly: false }, magicType: { type: ['line', 'bar'] }, restore: {}, saveAsImage: {} } },
+        xAxis: [
+            { type: 'category', boundaryGap: false, data: [], position: 'top' },
+            { type: 'category', boundaryGap: false, data: [], position: 'bottom' }
+        ],
+        yAxis: { type: 'value', axisLabel: { formatter: '{value} °C' } },
+        series: [
+            {
+                name: '高温', type: 'line', data: [], smooth: true,
+                markPoint: { data: [{ type: 'max', name: '最高气温' }] },
+                markLine: { data: [{ type: 'average', name: '平均值' }] },
+                lineStyle: { color: '#5470c6' }, itemStyle: { color: '#5470c6' }
+            },
+            {
+                name: '低温', type: 'line', data: [], smooth: true,
+                markPoint: { data: [{ type: 'min', name: '最低气温' }] },
+                markLine: { data: [{ type: 'average', name: '平均值' }] },
+                lineStyle: { color: '#91cc75' }, itemStyle: { color: '#91cc75' }
+            }
+        ]
+    };
+
+    // 视频09 切换城市：城市存 localStorage，刷新后还记得上次查的城市
+    function weather(city) {
+        if (!city) {
+            city = document.getElementById('city').value.trim() || localStorage.getItem('city') || '北京';
+        }
+        document.getElementById('city').value = city;
+        fetch('/weather/spider?city=' + encodeURIComponent(city))
+            .then(function (r) { return r.json(); })
+            .then(function (w) {
+                if (w.error) { document.getElementById('chart').innerHTML = '数据获取失败：' + w.error; return; }
+                option.title.text = w.city + '一周气温变化';
+                localStorage.setItem('city', w.city);
+                option.xAxis[0].data = w.time;      // 上轴：日期
+                option.xAxis[1].data = w.status;    // 下轴：天气状况
+                option.series[0].data = w.temp2;    // 高温蓝线
+                option.series[1].data = w.temp1;    // 低温绿线
+                chart.setOption(option, true);
+            })
+            .catch(function (e) {
+                document.getElementById('chart').innerHTML = '数据加载失败：' + e;
+            });
+    }
+
+    weather(localStorage.getItem('city') || document.getElementById('city').value.trim());
+    window.addEventListener('resize', function () { chart.resize(); });
+</script>
 <script>
     var chart = echarts.init(document.getElementById('chart'));
 

@@ -38,6 +38,9 @@ public class UserServlet extends TomHttpServlet {
         if (user != null) {
             HttpSession session = req.getSession();
             session.setAttribute("username", user.getUsername());
+            // 视频09：身份也放进 session（key 用 status，和老师的 JSP 判断保持一致），
+            // 菜单和页面按身份控制；查询条件单独用 request 的 username，两者不能混
+            session.setAttribute("status", user.getRole());
             // 登录名放 session 给顶栏用；查询条件单独用 request 的 username，两者不能混
             req.setAttribute("retList", userDAO.getUserList());
             return open("/user/list.jsp");

@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%@ page import="com.common.dbaccess.bean.City" %>
 <%@ page import="java.util.List" %>
 <%--
@@ -31,7 +33,7 @@
         <span class="avatar"></span>
         <div class="uinfo">
             <span>欢迎光临，</span>
-            <span class="uname">${empty sessionScope.username ? '张三' : sessionScope.username}</span>
+            <span class="uname">${empty sessionScope.username ? '张三' : sessionScope.username}<small class="urole">${empty sessionScope.status ? '' : sessionScope.status}</small></span>
         </div>
         <span class="caret"></span>
         <div class="usermenu">
@@ -84,9 +86,11 @@
             <span class="chev">&#9662;</span>
         </li>
         <ul class="submenu">
+            <c:if test="${sessionScope.status == '管理员'}">
             <li><a href="/user/list">用户管理</a></li>
+            </c:if>
             <li class="active"><a href="/city/list">城市查看</a></li>
-            <li><a href="/weather/chart">天气查看</a></li>
+            <li><a href="/weather/chart">天气预报</a></li>
         </ul>
     </ul>
     <div class="collapse"><span>&#8249;&#8249;</span></div>
@@ -94,7 +98,7 @@
 
 <div class="content">
     <div class="breadcrumb">
-        <a href="/city/list">城市管理</a><span class="sep">/</span>查询城市
+        <a href="/city/list">城市查看</a><span class="sep">/</span>查询城市
     </div>
 
     <!-- 老师这里只剩一个「刷新」按钮：没有查询输入框，也没有「添加用户」 -->
