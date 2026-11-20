@@ -49,6 +49,33 @@ public class UserServlet extends TomHttpServlet {
         return open("/index.html?msg=用户名或密码错误");
     }
 
+    /**
+     * 注册功能（2次作业任务1）：新用户自己填写账号密码，身份固定为"用户"。
+     * 先查重，重名就带提示退回注册页；成功后回登录页并带"注册成功"提示。
+     */
+    public String register(HttpServletRequest req, HttpServletResponse resp) {
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String confirm = req.getParameter("confirm");
+
+        if (username == null || username.trim().isEmpty()
+                || password == null || password.trim().isEmpty()) {
+            return open("/register.html?msg=账号和密码都不能为空");
+        }
+        if (!password.equals(confirm)) {
+            return open("/register.html?msg=两次输入的密码不一致");
+        }
+        if (userDAO.getSingleUser(username.trim()) != null) {
+            return open("/register.html?msg=该账号已经存在，请换一个");
+        }
+        User bean = new User();
+        bean.setUsername(username.trim());
+        bean.setPassword(password);
+        bean.setRole("用户");
+        userDAO.insertOrUpdate(bean);
+        return open("/index.html?msg=注册成功，请登录");
+    }
+
     public String logout(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(false);
         if (session != null) {
